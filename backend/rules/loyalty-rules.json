@@ -1,0 +1,175 @@
+{
+  "version": "1.0.0",
+  "description": "Airline Loyalty Program Discount Rules",
+  "lastUpdated": "2025-10-31",
+  "rules": [
+    {
+      "id": "platinum-vip-high-spender",
+      "priority": 1,
+      "description": "Platinum members spending over $5000 get premium VIP discount",
+      "condition": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "field": "tier",
+            "operator": "==",
+            "value": "platinum"
+          },
+          {
+            "field": "total_spend",
+            "operator": ">",
+            "value": 5000
+          }
+        ]
+      },
+      "action": {
+        "discountPercent": 20,
+        "message": "🏆 Platinum VIP discount (20%) applied!",
+        "stackable": false
+      }
+    },
+    {
+      "id": "platinum-discount",
+      "priority": 2,
+      "description": "Platinum tier members receive 15% discount",
+      "condition": {
+        "field": "tier",
+        "operator": "==",
+        "value": "platinum"
+      },
+      "action": {
+        "discountPercent": 15,
+        "message": "💎 Platinum member discount (15%) applied",
+        "stackable": false
+      }
+    },
+    {
+      "id": "gold-high-spender",
+      "priority": 3,
+      "description": "Gold members spending over $5000 get additional bonus",
+      "condition": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "field": "tier",
+            "operator": "==",
+            "value": "gold"
+          },
+          {
+            "field": "total_spend",
+            "operator": ">",
+            "value": 5000
+          }
+        ]
+      },
+      "action": {
+        "discountPercent": 12,
+        "message": "✨ Gold member high-spender bonus (12%) applied!",
+        "stackable": false
+      }
+    },
+    {
+      "id": "gold-discount",
+      "priority": 4,
+      "description": "Gold tier members receive 10% discount",
+      "condition": {
+        "field": "tier",
+        "operator": "==",
+        "value": "gold"
+      },
+      "action": {
+        "discountPercent": 10,
+        "message": "⭐ Gold member discount (10%) applied",
+        "stackable": false
+      }
+    },
+    {
+      "id": "silver-discount",
+      "priority": 5,
+      "description": "Silver tier members receive 5% discount",
+      "condition": {
+        "field": "tier",
+        "operator": "==",
+        "value": "silver"
+      },
+      "action": {
+        "discountPercent": 5,
+        "message": "🌟 Silver member discount (5%) applied",
+        "stackable": false
+      }
+    },
+    {
+      "id": "weekend-bonus",
+      "priority": 6,
+      "description": "Weekend shoppers (Gold & Platinum only) get extra 5% bonus",
+      "condition": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "field": "day_of_week",
+            "operator": "IN",
+            "value": ["Saturday", "Sunday"]
+          },
+          {
+            "field": "tier",
+            "operator": "IN",
+            "value": ["gold", "platinum"]
+          }
+        ]
+      },
+      "action": {
+        "discountPercent": 5,
+        "message": "🎉 Weekend bonus (5%) stacked!",
+        "stackable": true
+      }
+    },
+    {
+      "id": "high-spend-bonus",
+      "priority": 7,
+      "description": "Bonus for spending over $5000 on any tier",
+      "condition": {
+        "field": "total_spend",
+        "operator": ">",
+        "value": 5000
+      },
+      "action": {
+        "discountPercent": 2,
+        "message": "💰 High spender bonus (2%) applied",
+        "stackable": true
+      }
+    },
+    {
+      "id": "bulk-purchase-bonus",
+      "priority": 8,
+      "description": "Additional discount for bulk purchases over $10000",
+      "condition": {
+        "field": "total_spend",
+        "operator": ">=",
+        "value": 10000
+      },
+      "action": {
+        "discountPercent": 3,
+        "message": "🚀 Bulk purchase bonus (3%) applied!",
+        "stackable": true
+      }
+    },
+    {
+      "id": "holiday-season-bonus",
+      "priority": 9,
+      "description": "Special bonus during holiday season (Dec 15 - Jan 15)",
+      "condition": {
+        "field": "booking_date",
+        "operator": "DATE_RANGE",
+        "value": {
+          "start": "2025-12-15",
+          "end": "2026-01-15"
+        }
+      },
+      "action": {
+        "discountPercent": 3,
+        "message": "🎄 Holiday season bonus (3%) applied!",
+        "stackable": true
+      }
+    }
+  ]
+}
