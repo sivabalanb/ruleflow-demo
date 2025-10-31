@@ -117,19 +117,6 @@ export default function App() {
             ⚠️ {error}
           </motion.div>
         )}
-
-        {serverStatus === 'online' && (
-          <motion.div
-            className="status-message online"
-            variants={statusVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            key="online-status"
-          >
-            ✅ Backend server is running and ready
-          </motion.div>
-        )}
       </AnimatePresence>
 
       <motion.header className="header" variants={itemVariants}>
@@ -140,17 +127,17 @@ export default function App() {
             type: 'spring',
             stiffness: 100,
             damping: 15,
-            delay: 0.3,
+            delay: 0.1,
           }}
         >
-          🚀 RuleFlow
+          🚀 RuleFlow Demo
         </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
         >
-          Drools-Style Rule Engine for Airline Loyalty Program
+          Dynamic Rule Engine • Airline Loyalty Program
         </motion.p>
       </motion.header>
 
@@ -259,11 +246,9 @@ export default function App() {
           </motion.a>{' '}
           | 📖{' '}
           <motion.a
-            href="#docs"
-            onClick={(e) => {
-              e.preventDefault();
-              alert('See README.md for full documentation');
-            }}
+            href="https://github.com/sivabalanb/ruleflow-demo/blob/master/README.md"
+            target="_blank"
+            rel="noopener noreferrer"
             whileHover={{ color: '#ffffff' }}
             transition={{ duration: 0.3 }}
           >

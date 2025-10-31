@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 export default function ResultDisplay({ result, input }) {
+  const [showJSON, setShowJSON] = useState(false);
+
   if (!result) return null;
 
   const containerVariants = {
@@ -25,6 +28,15 @@ export default function ResultDisplay({ result, input }) {
         damping: 15,
       },
     },
+  };
+
+  const resultJSON = {
+    input: {
+      tier: input.tier,
+      total_spend: input.total_spend,
+      booking_date: input.booking_date,
+    },
+    output: result,
   };
 
   return (
@@ -147,6 +159,41 @@ export default function ResultDisplay({ result, input }) {
         rules (lower number) take precedence. Non-stackable rules exclude lower-priority matches,
         while stackable rules combine with others.
       </motion.div>
+
+      {/* JSON Display Toggle */}
+      <motion.div
+        style={{ marginTop: '1.5rem', display: 'flex', gap: '0.5rem' }}
+        variants={itemVariants}
+      >
+        {/* <motion.button
+          className="btn btn-secondary"
+          onClick={() => setShowJSON(!showJSON)}
+          style={{ fontSize: '0.9rem', padding: '0.6rem 1.2rem', flex: 1 }}
+          whileHover={{ scale: 1.02, y: -2 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          {showJSON ? '📋 Hide JSON' : '📋 View JSON'}
+        </motion.button> */}
+      </motion.div>
+
+      {/* JSON Display */}
+      {showJSON && (
+        <motion.div
+          className="json-display"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+          style={{ marginTop: '1rem' }}
+        >
+          <motion.pre
+            className="json-content"
+            variants={itemVariants}
+          >
+            {JSON.stringify(resultJSON, null, 2)}
+          </motion.pre>
+        </motion.div>
+      )}
     </motion.div>
   );
 }

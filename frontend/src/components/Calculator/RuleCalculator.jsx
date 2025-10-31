@@ -14,8 +14,32 @@ export default function RuleCalculator() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const validateDate = (dateString) => {
+    const date = new Date(dateString + 'T00:00:00');
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    
+    if (month < 1 || month > 12) {
+      return 'Invalid month (1-12)';
+    }
+    if (day < 1 || day > 31) {
+      return 'Invalid day (1-31)';
+    }
+    return null;
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    
+    if (name === 'booking_date') {
+      const dateError = validateDate(value);
+      if (dateError) {
+        setError(`❌ ${dateError}`);
+        return;
+      }
+      setError(null);
+    }
+    
     setFormData((prev) => ({
       ...prev,
       [name]: name === 'total_spend' ? parseFloat(value) || 0 : value
@@ -28,6 +52,26 @@ export default function RuleCalculator() {
     setLoading(true);
     setError(null);
     setResult(null);
+
+    // Validate input data before calculation
+    if (formData.total_spend < 0) {
+      setError('Total spend cannot be negative');
+      setLoading(false);
+      return;
+    }
+
+    if (formData.total_spend > 1000000) {
+      setError('Total spend cannot exceed $1,000,000');
+      setLoading(false);
+      return;
+    }
+
+    const dateError = validateDate(formData.booking_date);
+    if (dateError) {
+      setError(`❌ ${dateError}`);
+      setLoading(false);
+      return;
+    }
 
     try {
       const data = await calculateDiscount(
@@ -291,13 +335,13 @@ export default function RuleCalculator() {
               animate={{ rotate: [0, 10, -10, 0] }}
               transition={{ duration: 3, repeat: Infinity }}
             >
-              📊
+              ✨
             </motion.div>
             <p style={{ fontSize: '1rem', fontWeight: 600 }}>
-              Calculate your discount
+              ✨ Calculate Your Discount
             </p>
             <p style={{ fontSize: '0.9rem', marginTop: '0.5rem' }}>
-              Fill in the form and click "Calculate Discount" to see the results here
+              Fill in the form above and click "Calculate Discount" to see personalized results here
             </p>
           </motion.div>
         )}

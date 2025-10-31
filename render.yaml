@@ -3,7 +3,8 @@ services:
     name: ruleflow-backend
     env: node
     plan: free
-    buildCommand: cd backend && npm install
+    root: backend
+    buildCommand: npm install
     startCommand: npm start
     envVars:
       - key: PORT
@@ -15,8 +16,9 @@ services:
 
   - type: static_site
     name: ruleflow-frontend
-    staticPublishPath: frontend/dist
-    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: dist
+    root: frontend
+    buildCommand: npm install && npm run build
     envVars:
       - key: VITE_API_URL
         sync: false
