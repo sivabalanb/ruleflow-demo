@@ -333,30 +333,31 @@ GET /api/rules/schema
 
 ## 🌐 Deployment
 
-### Frontend (GitHub Pages)
+**Complete deployment guide with step-by-step instructions:** 📚 [**See DEPLOYMENT.md**](./DEPLOYMENT.md)
 
-```bash
-# Build frontend
-cd frontend
-npm run build
+### Quick Summary
 
-# Files in frontend/dist/ can be deployed to GitHub Pages
-# Configure in your repository settings
+**Frontend & Backend on Render (Recommended):**
+- Both services deploy independently
+- Frontend as Static Site, Backend as Web Service
+- Automatic redeployment on git push
+- Free tier available
+- **Full Guide:** [DEPLOYMENT.md](./DEPLOYMENT.md)
+
+**Architecture:**
+```
+GitHub Repository
+    ├─→ Render Frontend (Static Site)
+    │   └─→ https://your-frontend.onrender.com
+    └─→ Render Backend (Web Service)
+        └─→ https://your-backend.onrender.com
 ```
 
-### Backend (Render)
-
-1. Create account at [render.com](https://render.com)
-2. Connect your GitHub repository
-3. Create new Web Service
-4. Build command: `cd backend && npm install`
-5. Start command: `npm start`
-6. Set environment variable: `PORT=3001`
-
-Update frontend's `vite.config.js` with your deployed backend URL:
-```javascript
-target: 'https://your-backend.onrender.com'
-```
+**Key Files for Deployment:**
+- [`render.yaml`](./render.yaml) - Render deployment configuration
+- [`DEPLOYMENT.md`](./DEPLOYMENT.md) - Complete deployment guide
+- [`backend/.env.example`](./backend/.env.example) - Backend environment variables
+- [`frontend/.env.example`](./frontend/.env.example) - Frontend environment variables
 
 ## 📚 Extending the Demo
 
