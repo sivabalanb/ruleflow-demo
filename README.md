@@ -23,26 +23,252 @@ The demo features an **Airline Loyalty Program** with membership tiers (Silver/G
 
 ## ⚙️ Architecture
 
+```mermaid
+flowchart TD
+    Frontend["🎨 React + Vite<br/><b>Frontend Layer</b><br/>━━━━━━━━━━━━━━━━<br/>• Rule Calculator<br/>• Rule Editor<br/>• Input Validation"]
+    
+    API["🔌 HTTP/REST API<br/><b>Communication Layer</b>"]
+    
+    Backend["⚙️ Node.js + Express<br/><b>Backend Layer</b><br/>━━━━━━━━━━━━━━━━<br/>• Rule Engine<br/>• Condition Evaluator<br/>• Rule Validator<br/>• API Endpoints"]
+    
+    FileIO["📂 File I/O<br/><b>Data Access</b>"]
+    
+    Rules["📋 JSON Rules File<br/><b>Rules Repository</b><br/>━━━━━━━━━━━━━━━━<br/>loyalty-rules.json<br/>Can be edited<br/>without restarts"]
+    
+    Frontend -->|POST /api/calculate| API
+    API -->|Forward Request| Backend
+    Backend -->|Load & Evaluate| FileIO
+    FileIO -->|Read/Write| Rules
+    Rules -->|Return Rules| FileIO
+    FileIO -->|Evaluation Result| Backend
+    Backend -->|JSON Response| API
+    API -->|Discount & Price| Frontend
+    
+    classDef frontend fill:#DBEAFE,stroke:#3B82F6,stroke-width:2px,color:#1E40AF,rounded:true
+    classDef api fill:#F3E8FF,stroke:#A855F7,stroke-width:2px,color:#581C87,rounded:true
+    classDef backend fill:#DCFCE7,stroke:#22C55E,stroke-width:2px,color:#166534,rounded:true
+    classDef io fill:#FEFCE8,stroke:#EAB308,stroke-width:2px,color:#78350F,rounded:true
+    classDef rules fill:#FFEDD5,stroke:#F97316,stroke-width:2px,color:#92400E,rounded:true
+    
+    class Frontend frontend
+    class API api
+    class Backend backend
+    class FileIO io
+    class Rules rules
 ```
-┌─────────────────────────────────────────┐
-│         React + Vite (Frontend)         │
-│  • Calculator: Test discount logic      │
-│  • Rule Editor: Modify rules live       │
-└──────────────┬──────────────────────────┘
-               │ HTTP/REST API
-┌──────────────▼──────────────────────────┐
-│     Node.js + Express (Backend)         │
-│  • Rule Engine (Condition Evaluator)    │
-│  • Rule Validator & Loader              │
-│  • REST API Endpoints                   │
-└──────────────┬──────────────────────────┘
-               │ File I/O
-┌──────────────▼──────────────────────────┐
-│       JSON Rules File                   │
-│  loyalty-rules.json                     │
-│  (Can be edited without restarts)       │
-└─────────────────────────────────────────┘
+
+---
+
+## 📊 Architecture Diagrams
+
+### 1️⃣ High-Level Ruleflow Overview
+
+Complete flow from user input through the rule engine to final decision output.
+
+```mermaid
+flowchart TD
+    Start([👤 User Input])
+    Start --> Frontend["🎨 React Frontend<br/>Rule Calculator"]
+    Frontend --> API["🔌 REST API<br/>Express Server"]
+    API --> Engine["⚙️ Rule Engine<br/>Priority Sorting"]
+    Engine --> Repo["📋 Rules Repository<br/>loyalty-rules.json"]
+    Repo --> Evaluate["🔍 Condition<br/>Evaluation"]
+    Evaluate --> Match{Rules<br/>Match?}
+    Match -->|Yes| Stack["🔄 Stackable<br/>Check"]
+    Stack --> Action["✅ Execute<br/>Action"]
+    Match -->|No| Output["📊 Final<br/>Output"]
+    Action --> Output
+    Output --> Result(["💰 Discount &<br/>Final Price"])
+    
+    classDef frontend fill:#DBEAFE,stroke:#3B82F6,stroke-width:2px,color:#1E40AF,rounded:true
+    classDef backend fill:#DCFCE7,stroke:#22C55E,stroke-width:2px,color:#166534,rounded:true
+    classDef rules fill:#FFEDD5,stroke:#F97316,stroke-width:2px,color:#92400E,rounded:true
+    classDef process fill:#F3E8FF,stroke:#A855F7,stroke-width:2px,color:#581C87,rounded:true
+    classDef decision fill:#FEFCE8,stroke:#EAB308,stroke-width:2px,color:#78350F,rounded:true
+    classDef output fill:#CCFBF1,stroke:#10B981,stroke-width:2px,color:#065F46,rounded:true
+    
+    class Start frontend
+    class Frontend frontend
+    class API backend
+    class Engine backend
+    class Repo rules
+    class Evaluate process
+    class Match decision
+    class Stack process
+    class Action process
+    class Output output
+    class Result output
 ```
+
+---
+
+### 2️⃣ Rule Fetching and Execution (Sequence Diagram)
+
+Interaction between frontend, backend, rules repository, and rule engine during a discount calculation.
+
+```mermaid
+sequenceDiagram
+    participant User as 👤 User
+    participant Frontend as 🎨 React Frontend
+    participant API as 🔌 API Layer<br/>Express
+    participant Service as ⚙️ Backend Service<br/>Rule Handler
+    participant Repo as 📋 Rules Repo<br/>JSON File
+    participant Engine as 🔧 Rule Engine<br/>Evaluator
+    
+    User->>Frontend: Enter tier, spend, date
+    activate Frontend
+    Frontend->>API: POST /api/calculate<br/>(tier, spend, date)
+    deactivate Frontend
+    
+    activate API
+    API->>Service: Forward evaluation request
+    deactivate API
+    
+    activate Service
+    Service->>Repo: Load all rules
+    deactivate Service
+    
+    activate Repo
+    Repo-->>Engine: Return rules array
+    deactivate Repo
+    
+    activate Engine
+    Engine->>Engine: Sort by priority
+    Engine->>Engine: Evaluate conditions
+    Engine->>Engine: Check stackable
+    Engine->>Engine: Calculate discounts
+    Engine-->>Service: Return results
+    deactivate Engine
+    
+    activate Service
+    Service->>API: Return calculated result
+    deactivate Service
+    
+    activate API
+    API-->>Frontend: JSON response<br/>(discount %, final price)
+    deactivate API
+    
+    activate Frontend
+    Frontend->>Frontend: Render results
+    Frontend-->>User: Display discount breakdown
+    deactivate Frontend
+```
+
+---
+
+### 3️⃣ Business Rule Management Flow
+
+How business users manage, test, and deploy rule changes without code.
+
+```mermaid
+flowchart LR
+    Start([👨‍💼 Business User])
+    
+    Start --> Edit["✏️ Edit Rule File<br/>YAML/JSON"]
+    Edit --> Validate{Validate<br/>Schema?}
+    
+    Validate -->|Invalid| Error["❌ Show Error<br/>Message"]
+    Error --> Edit
+    
+    Validate -->|Valid| VC["📦 Version Control<br/>Git Commit"]
+    VC --> Push["🚀 Push to<br/>Repository"]
+    
+    Push --> AutoLoad["🔄 Auto-Load<br/>in Engine"]
+    AutoLoad --> Reload["♻️ Engine Reloads<br/>Rules in Memory"]
+    
+    Reload --> Test["🧪 Test New<br/>Rules"]
+    Test --> Dashboard["📊 Dashboard<br/>View Results"]
+    
+    Dashboard --> Monitor["👁️ Monitor<br/>Outcomes"]
+    Monitor --> Success{Rules<br/>Working?}
+    
+    Success -->|No| Edit
+    Success -->|Yes| Done(["✅ Live in<br/>Production"])
+    
+    classDef user fill:#DBEAFE,stroke:#3B82F6,stroke-width:2px,color:#1E40AF,rounded:true
+    classDef edit fill:#FFEDD5,stroke:#F97316,stroke-width:2px,color:#92400E,rounded:true
+    classDef validate fill:#FEFCE8,stroke:#EAB308,stroke-width:2px,color:#78350F,rounded:true
+    classDef system fill:#DCFCE7,stroke:#22C55E,stroke-width:2px,color:#166534,rounded:true
+    classDef monitor fill:#F3E8FF,stroke:#A855F7,stroke-width:2px,color:#581C87,rounded:true
+    classDef decision fill:#FCE7F3,stroke:#EC4899,stroke-width:2px,color:#831843,rounded:true
+    classDef success fill:#CCFBF1,stroke:#10B981,stroke-width:2px,color:#065F46,rounded:true
+    
+    class Start user
+    class Edit edit
+    class Validate validate
+    class Error validate
+    class VC system
+    class Push system
+    class AutoLoad system
+    class Reload system
+    class Test monitor
+    class Dashboard monitor
+    class Monitor monitor
+    class Success decision
+    class Done success
+```
+
+---
+
+### 4️⃣ Internal Rule Evaluation Flow
+
+Step-by-step logic inside the rule engine when evaluating rules against input data.
+
+```mermaid
+flowchart TD
+    Start(["📥 Input Data<br/>(tier, spend, date)"])
+    
+    Start --> Load["📂 Load All Rules<br/>from Repository"]
+    Load --> Sort["🔢 Sort Rules<br/>by Priority"]
+    Sort --> Loop["🔄 For Each Rule<br/>in Order"]
+    
+    Loop --> CheckCond{Condition<br/>Matches?}
+    CheckCond -->|No| NextRule["⏭️ Move to<br/>Next Rule"]
+    NextRule --> EndLoop{More<br/>Rules?}
+    
+    CheckCond -->|Yes| CheckStack{Rule<br/>Stackable?}
+    
+    CheckStack -->|No| CheckApplied{Already<br/>Applied?}
+    CheckApplied -->|Yes| NextRule
+    CheckApplied -->|No| Execute["✅ Execute<br/>Action"]
+    
+    CheckStack -->|Yes| Execute
+    
+    Execute --> AddDiscount["💰 Add Discount<br/>to Total"]
+    AddDiscount --> AddRecord["📝 Record Applied<br/>Rule"]
+    AddRecord --> NextRule
+    
+    EndLoop -->|Yes| Loop
+    EndLoop -->|No| Calculate["🧮 Calculate<br/>Final Amount"]
+    
+    Calculate --> BuildResult["🏗️ Build Result<br/>Object"]
+    BuildResult --> Output(["📊 Output Result<br/>Applied Rules +<br/>Final Price"])
+    
+    classDef input fill:#DBEAFE,stroke:#3B82F6,stroke-width:2px,color:#1E40AF,rounded:true
+    classDef process fill:#DCFCE7,stroke:#22C55E,stroke-width:2px,color:#166534,rounded:true
+    classDef decision fill:#FEFCE8,stroke:#EAB308,stroke-width:2px,color:#78350F,rounded:true
+    classDef action fill:#F3E8FF,stroke:#A855F7,stroke-width:2px,color:#581C87,rounded:true
+    classDef calculate fill:#FFEDD5,stroke:#F97316,stroke-width:2px,color:#92400E,rounded:true
+    classDef output fill:#CCFBF1,stroke:#10B981,stroke-width:2px,color:#065F46,rounded:true
+    
+    class Start input
+    class Load process
+    class Sort process
+    class Loop process
+    class NextRule process
+    class CheckCond decision
+    class CheckStack decision
+    class CheckApplied decision
+    class EndLoop decision
+    class Execute action
+    class AddDiscount action
+    class AddRecord action
+    class Calculate calculate
+    class BuildResult calculate
+    class Output output
+```
+
+---
 
 ## 🏗️ Project Structure
 
