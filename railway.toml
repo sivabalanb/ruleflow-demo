@@ -5,7 +5,7 @@
 # Use Dockerfile for building
 builder = "dockerfile"
 # Path to Dockerfile relative to context
-dockerfilePath = "backend/Dockerfile"
+dockerfilePath = "Dockerfile"
 # Set working directory to backend
 context = "backend"
 
