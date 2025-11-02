@@ -22,40 +22,8 @@ The demo features an **Airline Loyalty Program** with membership tiers (Silver/G
 - Combination rules (tier + spend thresholds)
 
 ## ⚙️ Architecture
+<img width="1262" height="781" alt="architecture-diagram" src="https://github.com/user-attachments/assets/794bc8cf-3536-4ad4-84f3-93aaefa28148" />
 
-```mermaid
-flowchart TD
-    Frontend["🎨 React + Vite<br/><b>Frontend Layer</b><br/>━━━━━━━━━━━━━━━━<br/>• Rule Calculator<br/>• Rule Editor<br/>• Input Validation"]
-    
-    API["🔌 HTTP/REST API<br/><b>Communication Layer</b>"]
-    
-    Backend["⚙️ Node.js + Express<br/><b>Backend Layer</b><br/>━━━━━━━━━━━━━━━━<br/>• Rule Engine<br/>• Condition Evaluator<br/>• Rule Validator<br/>• API Endpoints"]
-    
-    FileIO["📂 File I/O<br/><b>Data Access</b>"]
-    
-    Rules["📋 JSON Rules File<br/><b>Rules Repository</b><br/>━━━━━━━━━━━━━━━━<br/>loyalty-rules.json<br/>Can be edited<br/>without restarts"]
-    
-    Frontend -->|POST /api/calculate| API
-    API -->|Forward Request| Backend
-    Backend -->|Load & Evaluate| FileIO
-    FileIO -->|Read/Write| Rules
-    Rules -->|Return Rules| FileIO
-    FileIO -->|Evaluation Result| Backend
-    Backend -->|JSON Response| API
-    API -->|Discount & Price| Frontend
-    
-    classDef frontend fill:#DBEAFE,stroke:#3B82F6,stroke-width:2px,color:#1E40AF,rounded:true
-    classDef api fill:#F3E8FF,stroke:#A855F7,stroke-width:2px,color:#581C87,rounded:true
-    classDef backend fill:#DCFCE7,stroke:#22C55E,stroke-width:2px,color:#166534,rounded:true
-    classDef io fill:#FEFCE8,stroke:#EAB308,stroke-width:2px,color:#78350F,rounded:true
-    classDef rules fill:#FFEDD5,stroke:#F97316,stroke-width:2px,color:#92400E,rounded:true
-    
-    class Frontend frontend
-    class API api
-    class Backend backend
-    class FileIO io
-    class Rules rules
-```
 
 ---
 
