@@ -1,7 +1,7 @@
 # Dependencies
 node_modules/
-package-lock.json
 yarn.lock
+# package-lock.json is needed for Docker builds
 
 # Build outputs
 dist/
