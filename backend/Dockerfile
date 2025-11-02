@@ -1,27 +1,24 @@
-# Multi-stage build for optimized production image
+# Production Node.js image for Railway deployment
 
-# Stage 1: Dependencies
-FROM node:18-alpine AS deps
+FROM node:18-alpine
+
 WORKDIR /app
+
+# Copy package files
 COPY package*.json ./
+
+# Install production dependencies
 RUN npm install --production
 
-# Stage 2: Production
-FROM node:18-alpine AS runner
-WORKDIR /app
-
-# Copy production dependencies from deps stage
-COPY --from=deps /app/node_modules ./node_modules
-
-# Copy application files
+# Copy application code
 COPY . .
 
 # Expose port (Railway will map to its own port)
 EXPOSE 3001
 
-# Health check
+# Health check endpoint
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD node -e "require('http').get('http://localhost:' + (process.env.PORT || 3001) + '/api/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
 
-# Start application
+# Start the application
 CMD ["npm", "start"]
