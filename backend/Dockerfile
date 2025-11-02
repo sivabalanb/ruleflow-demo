@@ -4,7 +4,7 @@
 FROM node:18-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm install --production
 
 # Stage 2: Production
 FROM node:18-alpine AS runner
