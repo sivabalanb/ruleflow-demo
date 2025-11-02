@@ -1,0 +1,12 @@
+# Railway Configuration File for Backend Deployment
+# Documentation: https://docs.railway.app
+
+[build]
+# Use Dockerfile for building
+builder = "dockerfile"
+
+[deploy]
+# Start command
+startCommand = "npm start"
+# Set environment
+environment = "production"
